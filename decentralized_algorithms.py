@@ -11,6 +11,11 @@ class SxCD():
     Available algorithms:
     SU-CD       Uniform neighbor selection
     SGS-CD      Gauss-Southwell neighbor selection
+    SL-CD       Random neighbor selection with Lipschitz probabilities
+    SGSL-CD     Gauss-Southwell-Lipschitz neighbor selection
+    SeL-CD      Random neighbor selection with Lipschitz probabilities and estimated constants
+    SGSeL-CD    Gauss-Southwell-Lipschitz neighbor selection with estimated constants
+
     """
     def __init__(self, the_problem, simu_vars, solver_name):
 
