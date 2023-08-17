@@ -8,7 +8,7 @@ import sys, time
 
 class SxCD():
     """
-    Available algoithms:
+    Available algorithms:
     SU-CD       Uniform neighbor selection
     SGS-CD      Gauss-Southwell neighbor selection
     """
@@ -40,7 +40,7 @@ class SxCD():
         self.dual = []
 
         if (self.solver_name == 'SeL-CD') or (self.solver_name == 'SGSeL-CD'): # initialize Lipschitz constants
-            self.Lest = [1e-2 for e in range(self.E)] # list of ESTIMATED Lipschitz constants << PROBABLY BETTER TO INITIALIZE THE M TO LARGE VALUES INSTEAD SO THAT THE COORDINATES GET PICKED !!!!!!
+            self.Lest = [1e-2 for e in range(self.E)] # list of ESTIMATED Lipschitz constants
         elif (self.solver_name == 'SL-CD') or (self.solver_name == 'SGSL-CD'): # compute Lipschitz constants
             self.L = self.the_problem.L # REAL Lipschitz constants
             for e in range(self.E):
@@ -77,7 +77,7 @@ class SxCD():
                 scaled_mag_grads_i = mag_grads_i / np.sqrt(Lest_of_i)
                 idx_j = np.where( scaled_mag_grads_i == np.max(scaled_mag_grads_i) )[0]
             # tie breaking
-            if hasattr(idx_j, "__len__"): # random unifrom choice among possibilities
+            if hasattr(idx_j, "__len__"): # random uniform choice among possibilities
                 idx_j = choice(idx_j)
         else:
             raise Exception("Invalid solver name")
@@ -89,8 +89,7 @@ class SxCD():
 
     def coordinate_step_with_Lips_estimation(self, i, j, idx_i, idx_j, e, grad_e):
         lambda_e_0 = np.copy(self.lambdas[e,:])
-        L_i = 0.001 # old ---> works better than the one below
-        # L_i = self.Lest[i] # try new ---> Is this really what Nesterov asks for? Check in detail sometime
+        L_i = 0.001 
         grad_new = -grad_e # to make sure that we enter the loop below
         while grad_e @ grad_new < 0:
             L_i = 2*L_i
@@ -98,7 +97,7 @@ class SxCD():
             theta_i = self.the_problem.arg_min_Lagran(i, self.lambdas).flatten()
             theta_j = self.the_problem.arg_min_Lagran(j, self.lambdas).flatten()
             grad_new = self.A[e,i]*theta_i + self.A[e,j]*theta_j
-        self.Lest[i] = 0.5 * L_i # new 
+        self.Lest[i] = 0.5 * L_i  
         return
 
 
