@@ -1,6 +1,5 @@
 """ 
-Define solver to solve the problem
-
+SxCD algorithm for the parallel distributed setting
 """
 
 import numpy as np
@@ -42,17 +41,11 @@ class Distrib_SxCD():
         for t in range(self.steps):
             i = np.random.randint(self.n) # random set goes active 
             e, e_grad = self.choose_coordinate(i) # choose coordinate
-            # print("e: ", e, "\t\t e_grad: ", e_grad)
             self.x[e] = self.x[e] - self.alpha * e_grad
             self.obj[t] = self.the_problem.objective(self.x)
-            # self.obj.append( self.the_problem.objective(self.x) )
             if self.obj[t] > 10**10: # thing is diverging ! 
                 print(' --> Objective > breaking_thresh @ iter ',t ,' --> break')             
                 break
-            # if abs(1 - self.obj[t]/self.the_problem.opt_val) < 10**(-14): # converged! stop!
-            #     print(' --> Precision < 10^(-14) reached @ iter',t ,' --> leave!')       
-            #     self.obj = self.obj[:t]      
-            #     break
             if abs(1 - self.obj[t]/self.the_problem.opt_val) < 10**(-9): # converged! stop!
                 print(' --> Precision < 10^(-9) reached @ iter',t ,' --> leave!')       
                 self.obj = self.obj[:t]      
