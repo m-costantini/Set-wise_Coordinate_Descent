@@ -1,11 +1,8 @@
-# CREATE PROBLEM WITH ONLY QUADRATIC TERM AND IDENTICAL f_i FOR ALL i
-
 import numpy as np
 from scipy.linalg import sqrtm
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_classification
 from scipy.optimize import minimize, fmin_tnc
-# from sklearn.linear_model import LogisticRegression
 import math
 
 
@@ -35,11 +32,8 @@ class QuadraticProblem():
             aux_0 = np.random.uniform(low=-0.01, high=0.01, size=(dim,dim))
             if c_choice == "few different":
                 if np.mod(i,degree) == 0:
-                    # c = 50
                     c = 1e15
-                    # c = 1e5 # brings problems when combined with 10
                 else:
-                    # c = 1
                     c = 10 
             elif c_choice == "increasing":
                 c = i+1
@@ -60,7 +54,6 @@ class QuadraticProblem():
 
             # Create linear term and offset
             Q = np.zeros((dim,1))
-            # Q = np.random.uniform(low=-0.01, high=0.01, size=(dim,1))
 
             R = 1 # just for f(x^*) not to be 0 and have problems in the division
 
@@ -139,12 +132,9 @@ class QuadraticProblem():
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 class LLS_Problem():
     """
-    Decentralized and regularized linear least squares problem with *no* regularization (real use case Infocom):
+    Decentralized and regularized linear least squares problem with *no* regularization:
     f_i(u_i) = (1/M) * ||X_i u_i - Y_i||_2^2 
     but with data generated as in Scaman 2017 (cosine with noise)
-
-    I originally used this problem for the DSGD demo for Gauthier. 
-    Here I replaced the funcitons of the original code (which were for primal DSGD) with those of the code for MobiHoc (dual, Sx-CD)
     """
     def __init__(self, n, dimensions, M, A, edge_to_nodes, iid):
         # Parameters
@@ -163,7 +153,6 @@ class LLS_Problem():
             xi = 0.25 * np.random.normal(size=(self.M, 1))
             self.Y[i] = self.X[i] @ np.ones((self.d, 1)) + np.cos(self.X[i] @ np.ones((self.d, 1))) + xi
             if not iid: # change slope by multiplying y values
-                # self.Y[i] = self.Y[i] * np.random.uniform(low=0.1, high=100)
                 self.Y[i] = self.Y[i] * (i+1)
         Xall = np.array(np.concatenate(self.X,axis=0))
         Yall = np.array(np.concatenate(self.Y,axis=0))
@@ -182,11 +171,9 @@ class LLS_Problem():
             ddfi = (-3/2) * self.XXinv[i] # the M factor is already inside XXinv
             ddfj = (-3/2) * self.XXinv[j]
 
-            # H_ee = self.A[e,i] * ddfi + self.A[e,j] * ddfj # WRONG, should not be weighted by the entries of A
             H_ee = ddfi + ddfj 
 
-            # eig_vals = np.linalg.eigvals(H_ee)
-            eig_vals = abs( np.linalg.eigvals(H_ee) ) # TRY
+            eig_vals = abs( np.linalg.eigvals(H_ee) ) 
 
             self.L[e] = max(eig_vals)
 
@@ -223,18 +210,15 @@ class LLS_Problem():
     def get_optimal_stepsizes(self,):
         # For this we compute the diagonal element of H using the formula 
         # H_ll = A_il f_i*'' + A_jl f_j*'' 
-        # with the values in the short LLS version of Frequently Used Derivations
         opt_sz = []
         for e in range(self.E):
             i, j = self.edge_to_nodes[e]
             ddfi = (-3/2) * self.XXinv[i] # the M factor is already inside XXinv
             ddfj = (-3/2) * self.XXinv[j]
             
-            # H_ee = self.A[e,i] * ddfi + self.A[e,j] * ddfj # WRONG, should not be weighted by the entries of A
             H_ee = ddfi + ddfj 
 
-            # eig_vals = np.linalg.eigvals(H_ee)
-            eig_vals = abs( np.linalg.eigvals(H_ee) ) # TRY
+            eig_vals = abs( np.linalg.eigvals(H_ee) )
 
             opt_sz.append(1/max(eig_vals))    
         return opt_sz
@@ -371,7 +355,6 @@ class LR_Problem_2():
         df_regularizer = 2 * self.c * theta # [d x 1]
         df_relaxation = (self.A[:,i] @ lambdas)  # [d x 1]
         result =  (1/self.M) * (df_loss_1.T @ df_loss_2) + df_regularizer + df_relaxation
-        # print("df_Li result:", result)
         return result
 
     def arg_min_Lagran(self, i, lambdas): # PER NODE (called from the solvers)
@@ -457,7 +440,6 @@ class LR_Problem():
     def per_node_Lagrangian(self, theta, lambdas, i):
         arg = -self.Y[i] * np.dot(self.X[i], theta) 
 
-        # loss_list = [ a if a > 1e2 else np.log(1 + np.exp(a)) for a in arg] # CONSUMES TOO MUCH TIME
         loss_list = np.zeros(np.shape(arg)) 
         flag_more = arg >= 1e2
         flag_less = arg < 1e2
@@ -477,7 +459,6 @@ class LR_Problem():
         df_regularizer = 2 * self.c * theta # [d x 1]
         df_relaxation = (self.A[:,i] @ lambdas)  # [d x 1]
         result =  (1/self.M) * (df_loss_1.T @ df_loss_2) + df_regularizer + df_relaxation
-        # print("df_Li result:", result)
         return result
 
     def arg_min_Lagran(self, i, lambdas): # PER NODE (called from the solvers)
