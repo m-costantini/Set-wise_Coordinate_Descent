@@ -1,7 +1,5 @@
 """
-Functions of illustrative_problem.ipynb
-
-28/01/2022
+Useful functions called at many points in the code
 """
 
 import numpy as np
