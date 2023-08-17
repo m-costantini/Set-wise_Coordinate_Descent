@@ -1,6 +1,5 @@
 """
-17/01/2023 original version
-07/02/2023 add num comm rounds computation
+Identical to decentralized_algorithms.py but it additionally returns the number of communication rounds for comparison in the experiment of Section VII.C
 """
 
 import numpy as np
@@ -107,7 +106,6 @@ class SxCD():
             self.comm += self.N[i] + 1
         lambda_e_0 = np.copy(self.lambdas[e,:])
         L_i = 0.001 # old ---> works better than the one below
-        # L_i = self.Lest[i] # try new ---> Is this really what Nesterov asks for? Check in detail sometime
         grad_new = -grad_e # to make sure that we enter the loop below
         while grad_e @ grad_new < 0:
             L_i = 2*L_i
