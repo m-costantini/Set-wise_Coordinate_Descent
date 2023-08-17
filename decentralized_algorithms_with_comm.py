@@ -55,7 +55,7 @@ class SxCD():
         self.comm_rounds = []
 
         if (self.solver_name == 'SeL-CD') or (self.solver_name == 'SGSeL-CD'): # initialize Lipschitz constants
-            self.Lest = [1e-2 for e in range(self.E)] # list of ESTIMATED Lipschitz constants << PROBABLY BETTER TO INITIALIZE THE M TO LARGE VALUES INSTEAD SO THAT THE COORDINATES GET PICKED !!!!!!
+            self.Lest = [1e-2 for e in range(self.E)] # list of ESTIMATED Lipschitz constants
         elif (self.solver_name == 'SL-CD') or (self.solver_name == 'SGSL-CD'): # compute Lipschitz constants
             self.L = self.the_problem.L # REAL Lipschitz constants
             for e in range(self.E):
