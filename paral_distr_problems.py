@@ -1,9 +1,6 @@
-# CREATE DISTRIBUTED SEPARABLE PROBLEM - Try the regularized sparse least squares of Nutini  
-
 import numpy as np
 
 class QuadraticProblem():
-    
     def __init__(self, coord_sets, P):
         
         # super(Distrib_problem, self).__init__()
@@ -19,8 +16,6 @@ class QuadraticProblem():
             grad = PP[c_set,:][:,c_set]
             self.set_PP.append( grad )
 
-
-
     # ---------------------------------------------------------------------------------- 
     # Generate functions
         
@@ -30,10 +25,3 @@ class QuadraticProblem():
     def get_set_grads(self, x, i):
         x_set = x[self.coord_sets[i]]
         return self.set_PP[i] @ x_set
-
-    # def check_problem_class(self, ):
-    #     for grads in self.set_grads:
-    #         print("grads: ", grads)
-
-
-
