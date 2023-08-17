@@ -1,10 +1,5 @@
 """
-Difference with version 1: 
-. Implement Lipschitz search with Lipschitz stpsize AND Lipschitz sampling for SL-CD
-. Have only one function for all algorithms
-. Implement also SGSL-CD
-
-17/01/2023
+Code of the different set-wise coordinate descent variants
 """
 
 import numpy as np
@@ -39,32 +34,17 @@ class SxCD():
         # variables initialization
 
         self.thetas = 10*np.ones(shape=(self.n,self.dim))
-        self.lambdas = 10*np.ones(shape=(self.E,self.dim))
-        
-        # self.thetas = np.ones(shape=(self.n,self.dim))
-        # self.lambdas = np.ones(shape=(self.E,self.dim))
-
-        # self.thetas = 0.01 * np.ones(shape=(self.n,self.dim))
-        # self.lambdas = 0.01 * np.ones(shape=(self.E,self.dim))        
+        self.lambdas = 10*np.ones(shape=(self.E,self.dim))     
         
         self.obj = []
         self.dual = []
 
         if (self.solver_name == 'SeL-CD') or (self.solver_name == 'SGSeL-CD'): # initialize Lipschitz constants
             self.Lest = [1e-2 for e in range(self.E)] # list of ESTIMATED Lipschitz constants << PROBABLY BETTER TO INITIALIZE THE M TO LARGE VALUES INSTEAD SO THAT THE COORDINATES GET PICKED !!!!!!
-            # >>>>>>>>>>>>>>>  COMPLETE INITIALIZATION HERE <<<<<<<<<<<<<<<
-            # although it seems that it is not needed
         elif (self.solver_name == 'SL-CD') or (self.solver_name == 'SGSL-CD'): # compute Lipschitz constants
             self.L = self.the_problem.L # REAL Lipschitz constants
             for e in range(self.E):
                 self.stepsizes[e] = 1/self.L[e]
-
-        # ~~~~~ PROGRAM SEEMS TO WORK FOR BOTH LLS AND QP WITHOUT THE LINES BELOW ~~~~~
-        # self.stepsizes = [0.9 * sz for sz in self.stepsizes] # not to be exactly on the limit
-        # THE PROBLEM WITH DOING THIS FOR LOW FACTORS (E.G. 0.5) IS THAT WE FAVOR THE ALGORITHMS ESTIMATING THE 
-        # LIPSCHITZ CONSTANT BECAUSE THEY CAN ADAPT IT AS MUCH AS NEEDED UNTIL MAKING THE STEPSIZE TIGHT
-        
-
 
     def choose_neighbor(self, i):
         if self.solver_name == 'SU-CD':
@@ -125,7 +105,6 @@ class SxCD():
     def solve(self,):
         for t in range(self.steps):
             print(f"\rCompleted {int((t+1)/self.steps*100)}%", end='')
-            # sys.stdout.flush()
 
             # activated node
             i = np.random.randint(self.n) # random node goes active
@@ -153,7 +132,6 @@ class SxCD():
                 elif last_suboptim_val < 10**(-9): # converged! stop!
                     print(' --> Precision < 10^(-9) reached @ iter',t ,' --> leave!')
                     break
-        # print("\r                                         ", end='\r') # delete progress printing
         print(" ", end='\r') # delete progress printing
         return np.array(self.obj), np.array(self.dual)
 
